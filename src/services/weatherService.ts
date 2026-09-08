@@ -1,6 +1,6 @@
 import type { AirQualityData, ForecastEntry, WeatherBundle, WeatherCurrent, WeatherForecastResponse, WeatherCurrentResponse, AirQualityResponse } from "../types";
 
-const API_KEY = "dda41e776c9c7326ccebf0cbcdfd7cdf";
+const API_KEY = import.meta.env.VITE_OPENWEATHER_KEY;
 
 function getConditionSummary(description: string): string {
   const lower = description.toLowerCase();

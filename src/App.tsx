@@ -62,7 +62,7 @@ function AppRoutes() {
     navigator.geolocation.getCurrentPosition(
       async ({ coords }) => {
         try {
-          const bundle = await fetchWeatherByCoordinates(coords.latitude, coords.longitude, "Current location");
+          const bundle = await fetchWeatherByCoordinates(coords.latitude, coords.longitude, "");
           setWeather(bundle);
           setCity(bundle.current.city);
           setHistory((prev) => [bundle.current.city, ...prev.filter((item) => item !== bundle.current.city)].slice(0, 8));

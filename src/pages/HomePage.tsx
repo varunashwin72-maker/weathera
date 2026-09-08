@@ -220,7 +220,8 @@ export function HomePage({ city, setCity, weather, loading, error, handleSearch,
         <AiAssistantPanel weather={weather} />
       </GlassCard>
 
-      {weather && insights && lifestyle && (
+      <div id="travel-guidance" className="contents">
+        {weather && insights && lifestyle && (
         <div className="grid gap-6 lg:grid-cols-2">
           <div className="flex flex-col gap-6">
             {/* Forecast intelligence */}
@@ -246,7 +247,7 @@ export function HomePage({ city, setCity, weather, loading, error, handleSearch,
 
             {/* What to expect */}
             <GlassCard delay={0.12}>
-              <div id="travel-guidance" className="p-5 sm:p-6">
+              <div className="p-5 sm:p-6">
                 <PanelHeader title="What to expect" subtitle="Elegant guidance for commuting, travel, and outdoor plans." />
                 <div className="grid gap-3 sm:grid-cols-3">
                   <InsightTile icon={<Sparkles size={15} />} title="AI insight" description={insights.aiInsight} accent="#22d3ee" highlighted />
@@ -292,7 +293,8 @@ export function HomePage({ city, setCity, weather, loading, error, handleSearch,
             </GlassCard>
           </div>
         </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }

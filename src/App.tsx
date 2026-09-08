@@ -5,7 +5,7 @@ import { HomePage } from "./pages/HomePage";
 import { HistoryPage } from "./pages/HistoryPage";
 import { LoginPage } from "./pages/LoginPage";
 import { SavedLocationsPage } from "./pages/SavedLocationsPage";
-import { fetchWeatherByCity } from "./services/weatherService";
+import { fetchWeatherByCity, fetchWeatherByCoordinates } from "./services/weatherService";
 import { fetchMe, logoutUser, saveHistory } from "./lib/auth";
 import { GlassCard } from "./components/GlassCard";
 import type { ThemeConfig, WeatherBundle } from "./types";
@@ -49,6 +49,35 @@ function AppRoutes() {
 
   function handleSearch() {
     fetchWeather(city);
+  }
+
+  async function handleCurrentLocation() {
+    if (!navigator.geolocation) {
+      setError("Location services are not supported by this browser.");
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+    navigator.geolocation.getCurrentPosition(
+      async ({ coords }) => {
+        try {
+          const bundle = await fetchWeatherByCoordinates(coords.latitude, coords.longitude, "Current location");
+          setWeather(bundle);
+          setCity(bundle.current.city);
+          setHistory((prev) => [bundle.current.city, ...prev.filter((item) => item !== bundle.current.city)].slice(0, 8));
+        } catch {
+          setError("Weather data could not be loaded for your current location.");
+        } finally {
+          setLoading(false);
+        }
+      },
+      () => {
+        setLoading(false);
+        setError("Allow location access to check weather near you.");
+      },
+      { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 },
+    );
   }
 
   function handleKey(event: React.KeyboardEvent<HTMLInputElement>) {
@@ -176,6 +205,7 @@ function AppRoutes() {
                   theme={theme}
                   handleSearch={handleSearch}
                   handleKey={handleKey}
+                  onCurrentLocation={handleCurrentLocation}
                   onSaveLocation={handleSaveLocation}
                   isSaved={savedLocations.includes(weather?.current.city ?? "")}
                 />

@@ -40,6 +40,7 @@ interface HomePageProps {
   theme: ThemeConfig;
   handleSearch: () => void;
   handleKey: (e: KeyboardEvent<HTMLInputElement>) => void;
+  onCurrentLocation: () => void;
   onSaveLocation: () => void;
   isSaved: boolean;
 }
@@ -77,7 +78,7 @@ function getMoonPhase(date: Date): string {
   return ["New moon", "Waxing crescent", "First quarter", "Waxing gibbous", "Full moon", "Waning gibbous", "Last quarter", "Waning crescent"][index];
 }
 
-export function HomePage({ city, setCity, weather, loading, error, handleSearch, handleKey, onSaveLocation, isSaved }: HomePageProps) {
+export function HomePage({ city, setCity, weather, loading, error, handleSearch, handleKey, onCurrentLocation, onSaveLocation, isSaved }: HomePageProps) {
   const insights = useMemo(() => {
     if (!weather) return null;
     return {
@@ -137,12 +138,21 @@ export function HomePage({ city, setCity, weather, loading, error, handleSearch,
             </div>
 
             <div className="mt-4 flex flex-wrap gap-2">
-              <span className="flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 text-sm text-slate-300">
-                <Compass size={14} /> Current location
-              </span>
-              <span className="flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 text-sm text-slate-300">
+              <button
+                type="button"
+                onClick={onCurrentLocation}
+                disabled={loading}
+                className="flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 text-sm text-slate-300 transition hover:bg-white/[0.1] hover:text-white disabled:cursor-wait disabled:opacity-60"
+              >
+                <Compass size={14} /> {loading ? "Finding you..." : "Current location"}
+              </button>
+              <button
+                type="button"
+                onClick={() => document.getElementById("travel-guidance")?.scrollIntoView({ behavior: "smooth", block: "center" })}
+                className="flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 text-sm text-slate-300 transition hover:bg-white/[0.1] hover:text-white"
+              >
                 <Navigation size={14} /> Travel guidance
-              </span>
+              </button>
               <span className="flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 text-sm text-slate-300">
                 <Mic size={14} /> Voice search
               </span>
@@ -236,7 +246,7 @@ export function HomePage({ city, setCity, weather, loading, error, handleSearch,
 
             {/* What to expect */}
             <GlassCard delay={0.12}>
-              <div className="p-5 sm:p-6">
+              <div id="travel-guidance" className="p-5 sm:p-6">
                 <PanelHeader title="What to expect" subtitle="Elegant guidance for commuting, travel, and outdoor plans." />
                 <div className="grid gap-3 sm:grid-cols-3">
                   <InsightTile icon={<Sparkles size={15} />} title="AI insight" description={insights.aiInsight} accent="#22d3ee" highlighted />
